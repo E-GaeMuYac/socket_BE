@@ -1,7 +1,7 @@
-version : 0.0
-os : linux
+version: 0.0
+os: linux
 files:
-  - source : /
+  - source: /
     destination: /home/ubuntu/socket_BE
 
 hooks:
@@ -13,4 +13,4 @@ hooks:
       runas: root
   ApplicationStart:
     - location: scripts/start.sh
-      runas: root      
+      runas: root

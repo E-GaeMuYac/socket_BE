@@ -14,7 +14,7 @@ io.on("connection", (socket) => {
 });
 
 app.get('/',(req, res) => {
- res.send('CICD')
+ res.send('CICD2')
 })
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
