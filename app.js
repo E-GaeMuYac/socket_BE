@@ -14,7 +14,7 @@ io.on("connection", (socket) => {
 });
 
 app.get('/',(req, res) => {
- res.send('CICD6')
+ res.send('pillnuts Chatting Server')
 })
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
