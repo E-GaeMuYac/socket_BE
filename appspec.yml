@@ -1,8 +1,8 @@
 version : 0.0
 os : linux
 files:
-  -source : /
-  destination: /home/ubuntu/socket_BE
+  - source : /
+    destination: /home/ubuntu/socket_BE
 
 hooks:
   ApplicationStop:
