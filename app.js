@@ -11,8 +11,13 @@ const io = require("socket.io")(http, {
 });
 require("dotenv").config();
 
+const logger = require("./logger/logger");
+
 io.on("connection", (socket) => {
+  logger.info("socketId : ", { message: socket.id });
   socket.on("chatting", (data) => {
+    logger.info("data : ", { message: data });
+    io.emit("chatting", data);
     socket.join(data);
     socket
       .to(data)
@@ -20,16 +25,25 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnecting", () => {
-    socket.rooms.forEach((room) =>
-      socket.to(room).emit("leave",`${socket.nickname}가 떠났습니다. ID : ${socket.id}`)
+    socket.rooms.forEach(
+      (room) =>
+      socket
+        .to(room)
+        .emit("leave", `${socket.nickname}가 떠났습니다. ID : ${socket.id}`)
     );
+    logger.info("leaveRoom : ", {
+      message: `${socket.nickname}가 떠났습니다. ID : ${socket.id}`,
+    })
   });
 
   socket.on("new_message", (msg, roomName) => {
+    logger.info("new_message : ", { message: `roomName : ${roomName}, msg : ${msg}` });
     socket.to(roomName).emit("new_message", `${socket.nickname} : ${msg}`);
   });
 
-  socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
+  socket.on("nickname", (nickname) => {
+    logger.info("nickname : ", { message: nickname });
+    (socket["nickname"] = nickname)});
 });
 
 app.get("/", (req, res) => {
