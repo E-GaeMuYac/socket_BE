@@ -41,6 +41,11 @@ const initSocket = (socket) => {
     io.emit(event, data, link);
   }
 
+  function notifyToChatbot(event, data, link) {
+    logger.info('chatbot 데이터를 emit합니다.');
+    io.emit(event, data, link);
+  }
+
   return {
     watchJoin: () => {
       watchEvent('join', async (data) => {
@@ -66,7 +71,7 @@ const initSocket = (socket) => {
           link = 'www.naver.com';
         }
         logger.info('chat 데이터를 emit합니다.');
-        io.emit(content, link);
+        notifyToChatbot('receive', content, link);
       });
     },
     watchBye: () => {
