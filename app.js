@@ -36,9 +36,9 @@ const initSocket = (socket) => {
     socket.on(event, func);
   }
 
-  function notifyToChat(event, data) {
+  function notifyToChat(event, data, link) {
     logger.info('chat 데이터를 emit합니다.');
-    io.emit(event, data);
+    io.emit(event, data, link);
   }
 
   return {
@@ -54,11 +54,14 @@ const initSocket = (socket) => {
       watchEvent('chatting', async (data) => {
         let content;
         if (data.includes('이메일')) {
-          content = `<a href="mailto:pillnutsss@gmail.com"></a>`;
+          content = 'mailto:pillnutsss@gmail.com';
         } else if (data.includes('개발자')) {
-          content = `개발자들이 궁금하신가요? /n <a href="www.naver.com"></a>`;
+          {
+            (content = '개발자들이 궁금하신가요?'), (link = 'www.naver.com');
+          }
         } else if (data.includes('설문조사')) {
-          content = `설문조사 참여하고 상품 받아가세요! /n <a href="www.naver.com"></a>`;
+          (content = '설문조사 참여하고 상품 받아가세요!'),
+            (link = 'www.naver.com');
         }
         logger.info('chatting');
         notifyToChat('receive', content);
