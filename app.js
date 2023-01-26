@@ -11,6 +11,7 @@ const io = new Server(http, {
     methods: ['GET', 'POST'],
   },
 });
+
 const { instrument } = require('@socket.io/admin-ui');
 instrument(io, {
   auth: false,
@@ -20,14 +21,20 @@ require('dotenv').config();
 const logger = require('./logger/logger');
 
 io.on('connection', (socket) => {
+  io.emit('connection', '연결 성공!');
+
   logger.info('socketId : ', { message: socket.id });
-  socket.on('chatting', (data) => {
-    logger.info('data : ', { message: data });
-    io.emit('chatting', data);
-    socket.join(data);
-    socket
-      .to(data)
-      .emit('join', `${socket.nickname}가 입장했습니다. ID : ${socket.id}`);
+  logger.info('data : ', { message: data });
+
+  socket.on('joinRoom', (data) => {
+    socket.join(data.room);
+    io.to(data.room).emit(
+      'joinRoom',
+      `${data.id}님이 ${data.room}방에 입장하였습니다.`
+    );
+    logger.info('data : ', {
+      message: `${data.id}님이 ${data.room}방에 입장하였습니다.`,
+    });
   });
 
   socket.on('disconnecting', () => {
@@ -36,16 +43,20 @@ io.on('connection', (socket) => {
         .to(room)
         .emit('leave', `${socket.nickname}가 떠났습니다. ID : ${socket.id}`)
     );
+
     logger.info('leaveRoom : ', {
       message: `${socket.nickname}가 떠났습니다. ID : ${socket.id}`,
     });
   });
 
-  socket.on('new_message', (msg, roomName) => {
+  socket.on('sendMessage', (data) => {
     logger.info('new_message : ', {
-      message: `roomName : ${roomName}, msg : ${msg}`,
+      message: `msg : ${msg}`,
     });
-    socket.to(roomName).emit('new_message', `${socket.nickname} : ${msg}`);
+    io.to(data.room).emit('sendMessage', {
+      id: item.id,
+      inputText: item.inputText,
+    });
   });
 
   socket.on('nickname', (nickname) => {
