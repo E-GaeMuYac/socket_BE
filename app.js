@@ -25,7 +25,7 @@ io.on('connection', (socket) => {
   logger.info('socketId : ', { message: socket.id });
 
   socket.on('joinRoom', (data) => {
-    logger.info('data : ', { message: JSON.parse(data) });
+    logger.info('data : ', { message: data });
     logger.info('data : ', { message: JSON.stringify(data) });
     socket.join(data.room);
     io.to(data.room).emit(
