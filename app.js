@@ -1,7 +1,10 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors());
+
 const http = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(http, {
@@ -16,53 +19,56 @@ const { instrument } = require('@socket.io/admin-ui');
 instrument(io, {
   auth: false,
 });
-require('dotenv').config();
 
 const logger = require('./logger/logger');
 
 io.on('connection', (socket) => {
-  io.emit('connection', '연결 성공!');
-  logger.info('socketId : ', { message: socket.id });
-
-  socket.on('joinRoom', (data) => {
-    logger.info('data : ', { message: data });
-    socket.join(data.room);
-    io.to(data.room).emit(
-      'joinRoom',
-      `${data.id}님이 ${data.room}방에 입장하였습니다.`
-    );
-    logger.info('data : ', {
-      message: `${data.id}님이 ${data.room}방에 입장하였습니다.`,
-    });
-  });
-
-  socket.on('disconnecting', () => {
-    socket.rooms.forEach((room) =>
-      socket
-        .to(room)
-        .emit('leave', `${socket.nickname}가 떠났습니다. ID : ${socket.id}`)
-    );
-
-    logger.info('leaveRoom : ', {
-      message: `${socket.nickname}가 떠났습니다. ID : ${socket.id}`,
-    });
-  });
-
-  socket.on('sendMessage', (data) => {
-    logger.info('new_message : ', {
-      message: `msg : ${msg}`,
-    });
-    io.to(data.room).emit('sendMessage', {
-      id: data.id,
-      inputText: data.inputText,
-    });
-  });
-
-  socket.on('nickname', (nickname) => {
-    logger.info('nickname : ', { message: nickname });
-    socket['nickname'] = nickname;
-  });
+  logger.info('connection :', { message: socket.id });
+  const { watchJoin, watchSend, watchBye } = initSocket(socket);
+  watchJoin();
+  watchSend();
+  watchBye();
 });
+
+const initSocket = (socket) => {
+  logger.info('새로운 소켓이 연결되었습니다.');
+  function watchEvent(event, func) {
+    socket.on(event, func);
+  }
+
+  function notifyToChat(event, data) {
+    logger.info('chat 데이터를 emit합니다.');
+    io.emit(event, data);
+  }
+
+  return {
+    watchJoin: () => {
+      watchEvent('join', async (data) => {
+        const { room } = data;
+        socket.join(room);
+      });
+    },
+
+    watchSend: () => {
+      watchEvent('send', async (data) => {
+        let content;
+        if (data.includes('이메일')) {
+          content = `<a href="mailto:pillnutsss@gmail.com"></a>`;
+        } else if (data.includes('개발자')) {
+          content = `개발자들이 궁금하신가요? /n <a href="www.naver.com"></a>`;
+        } else if (data.includes('설문조사')) {
+          content = `설문조사 참여하고 상품 받아가세요! /n <a href="www.naver.com"></a>`;
+        }
+        notifyToChat('receive', content);
+      });
+    },
+    watchBye: () => {
+      watchEvent('disconnect', () => {
+        logger.info('채팅 접속 해제');
+      });
+    },
+  };
+};
 
 app.get('/', (req, res) => {
   res.send('pillNuts Chatting Server!!');
