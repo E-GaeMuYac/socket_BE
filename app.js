@@ -24,9 +24,9 @@ io.on('connection', (socket) => {
   io.emit('connection', '연결 성공!');
 
   logger.info('socketId : ', { message: socket.id });
-  logger.info('data : ', { message: data });
 
   socket.on('joinRoom', (data) => {
+    logger.info('data : ', { message: data });
     socket.join(data.room);
     io.to(data.room).emit(
       'joinRoom',
