@@ -53,6 +53,7 @@ const initSocket = (socket) => {
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         let content;
+        let link;
         if (data.includes('이메일')) {
           content = '이메일로 문의할 사항이 있나요?';
           link =
