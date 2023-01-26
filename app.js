@@ -22,11 +22,11 @@ const logger = require('./logger/logger');
 
 io.on('connection', (socket) => {
   io.emit('connection', '연결 성공!');
-
   logger.info('socketId : ', { message: socket.id });
 
   socket.on('joinRoom', (data) => {
-    logger.info('data : ', { message: data });
+    logger.info('data : ', { message: JSON.parse(data) });
+    logger.info('data : ', { message: JSON.stringify(data) });
     socket.join(data.room);
     io.to(data.room).emit(
       'joinRoom',
