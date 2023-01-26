@@ -36,11 +36,11 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('disconnecting', () => {
+  socket.on('disconnecting', (data) => {
     socket.rooms.forEach((room) =>
       socket
         .to(room)
-        .emit('leave', `${socket.nickname}가 떠났습니다. ID : ${socket.id}`)
+        .emit('leave', `${data.id}가 떠났습니다. ID : ${socket.id}`)
     );
 
     logger.info('leaveRoom : ', {
