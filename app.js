@@ -26,7 +26,6 @@ io.on('connection', (socket) => {
 
   socket.on('joinRoom', (data) => {
     logger.info('data : ', { message: data });
-    logger.info('data : ', { message: JSON.stringify(data) });
     socket.join(data.room);
     io.to(data.room).emit(
       'joinRoom',
@@ -54,8 +53,8 @@ io.on('connection', (socket) => {
       message: `msg : ${msg}`,
     });
     io.to(data.room).emit('sendMessage', {
-      id: item.id,
-      inputText: item.inputText,
+      id: data.id,
+      inputText: data.inputText,
     });
   });
 
