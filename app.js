@@ -46,6 +46,7 @@ const initSocket = (socket) => {
       watchEvent('join', async (data) => {
         const { room } = data;
         socket.join(room);
+        logger.info('방 접속에 성공하였습니다.');
       });
     },
 
@@ -59,6 +60,7 @@ const initSocket = (socket) => {
         } else if (data.includes('설문조사')) {
           content = `설문조사 참여하고 상품 받아가세요! /n <a href="www.naver.com"></a>`;
         }
+        logger.info('chatting');
         notifyToChat('receive', content);
       });
     },
