@@ -53,12 +53,11 @@ const initSocket = (socket) => {
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         let content;
+        let link = null;
         if (data.includes('이메일')) {
           content = 'mailto:pillnutsss@gmail.com';
         } else if (data.includes('개발자')) {
-          {
-            (content = '개발자들이 궁금하신가요?'), (link = 'www.naver.com');
-          }
+          (content = '개발자들이 궁금하신가요?'), (link = 'www.naver.com');
         } else if (data.includes('설문조사')) {
           (content = '설문조사 참여하고 상품 받아가세요!'),
             (link = 'www.naver.com');
