@@ -50,7 +50,7 @@ const initSocket = (socket) => {
     },
 
     watchSend: () => {
-      watchEvent('send', async (data) => {
+      watchEvent('chatting', async (data) => {
         let content;
         if (data.includes('이메일')) {
           content = `<a href="mailto:pillnutsss@gmail.com"></a>`;
