@@ -64,7 +64,7 @@ const initSocket = (socket) => {
             (link = 'www.naver.com');
         }
         logger.info('chatting');
-        notifyToChat('receive', content);
+        notifyToChat('receive', content, link);
       });
     },
     watchBye: () => {
