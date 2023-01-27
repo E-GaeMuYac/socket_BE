@@ -38,6 +38,7 @@ const initSocket = (socket) => {
 
   function notifyToChat(event, data, link, room) {
     logger.info('chatbot 데이터를 emit합니다.');
+    logger.info(event, data, link, room);
     socket.to(room).emit(event, data, link);
   }
 
@@ -53,10 +54,11 @@ const initSocket = (socket) => {
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
-        logger.info(data);
+        logger.info(`data : ${data}`);
         const { room } = data;
         const { message } = data;
-        logger.info(room, message);
+        logger.info(`room : ${room}`);
+        logger.info(`message : ${message}`);
         let content;
         let link;
         if (message.includes('이메일')) {
