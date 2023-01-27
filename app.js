@@ -23,20 +23,11 @@ instrument(io, {
 const logger = require('./logger/logger');
 
 io.on('connection', (socket) => {
-  const req = socket.request;
-  const {
-    headers: { referer },
-  } = req;
-  const roomId = referer
-    .split('/')
-    [referer.split('/').length - 1].replace(/\?.+/, '');
-  logger.info('connection :', { message: req });
-  logger.info('connection :', { message: referer });
-  logger.info('connection :', { message: roomId });
   logger.info('connection :', { message: socket.id });
   const { watchJoin, watchSend, watchBye } = initSocket(socket);
   watchJoin();
   watchSend();
+  watchLeave();
   watchBye();
 });
 
@@ -46,53 +37,70 @@ const initSocket = (socket) => {
     socket.on(event, func);
   }
 
-  function notifyToChat(event, data, link, room) {
+  function notifyToChatbot(event, data, link, room) {
     logger.info('chatbot 데이터를 emit합니다.');
-    logger.info('edit');
-    logger.info(event);
-    logger.info(data);
-    logger.info(link);
-    logger.info(room);
-    logger.info('edit');
     socket.join(room);
     io.to(room).emit(event, data, link);
+  }
+
+  function notifyToChat(event, data, room) {
+    logger.info('chat 데이터를 emit합니다.');
+    socket.join(room);
+    io.to(room).emit(event, data);
   }
 
   return {
     watchJoin: () => {
       watchEvent('join', async (data) => {
-        const { room } = data;
+        const { room, nickname } = data;
         socket.join(room);
-        io.to(room).emit('join', '안녕하세요 필넛츠 문의하기입니다');
+        io.to(room).emit(
+          'join',
+          `안녕하세요 ${nickname}님 필넛츠 문의하기입니다!`
+        );
         logger.info('방 접속에 성공하였습니다.');
-        logger.info(socket.id);
+      });
+    },
+
+    watchLeave: () => {
+      watchEvent('leave', async (data) => {
+        const { room, nickname } = data;
+        socket.leave(room);
+        io.to(room).emit('leave', `${nickname}님이 방을 나갔습니다!`);
+        logger.info('방을 나가가셨습니다.');
       });
     },
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         logger.info(`data : ${data}`);
-        const { room } = data;
-        const { message } = data;
+        const { type, room, message } = data;
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
         let content;
         let link;
-        if (message.includes('이메일')) {
-          content = '이메일로 문의할 사항이 있나요?';
-          link =
-            'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
-        } else if (message.includes('개발자')) {
-          content = '개발자들이 궁금하신가요?';
-          link = 'http://www.naver.com';
-        } else if (message.includes('설문조사')) {
-          content = '설문조사 참여하고 경품 받아가세요!';
-          link = 'http://www.naver.com';
-        } else if (message.includes('채팅')) {
-          content = '채팅 상담이 필요하신가요?';
-          link = 'http://www.naver.com';
+        if (type === '챗봇') {
+          if (message.includes('이메일')) {
+            content = '이메일로 문의할 사항이 있나요?';
+            link =
+              'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
+          } else if (message.includes('개발자')) {
+            content = '개발자들이 궁금하신가요?';
+            link = 'http://www.naver.com';
+          } else if (message.includes('설문조사')) {
+            content = '설문조사 참여하고 경품 받아가세요!';
+            link = 'http://www.naver.com';
+          } else if (message.includes('채팅')) {
+            content = '채팅 상담이 필요하신가요?';
+            link = 'http://www.naver.com';
+          } else {
+            content = '등록되지않은 키워드입니다';
+            link = 'http://www.naver.com';
+          }
+          notifyToChatbot('receive', content, link, room);
+        } else {
+          notifyToChat('receive', content, room);
         }
-        notifyToChat('receive', content, link, room);
       });
     },
     watchBye: () => {
