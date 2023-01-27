@@ -36,9 +36,9 @@ const initSocket = (socket) => {
     socket.on(event, func);
   }
 
-  function notifyToChat(event, data, link) {
+  function notifyToChat(event, data, link, room) {
     logger.info('chatbot 데이터를 emit합니다.');
-    socket.to(socket.room).emit(event, data, link);
+    socket.to(room).emit(event, data, link);
   }
 
   return {
@@ -47,29 +47,30 @@ const initSocket = (socket) => {
         const { room } = data;
         socket.join(room);
         logger.info('방 접속에 성공하였습니다.');
-        logger.info(socket.room);
+        logger.info(socket.id);
       });
     },
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
+        const { room, message } = data;
         let content;
         let link;
-        if (data.includes('이메일')) {
+        if (message.includes('이메일')) {
           content = '이메일로 문의할 사항이 있나요?';
           link =
             'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
-        } else if (data.includes('개발자')) {
+        } else if (message.includes('개발자')) {
           content = '개발자들이 궁금하신가요?';
           link = 'http://www.naver.com';
-        } else if (data.includes('설문조사')) {
+        } else if (message.includes('설문조사')) {
           content = '설문조사 참여하고 경품 받아가세요!';
           link = 'http://www.naver.com';
-        } else if (data.includes('채팅')) {
+        } else if (message.includes('채팅')) {
           content = '채팅 상담이 필요하신가요?';
           link = 'http://www.naver.com';
         }
-        notifyToChat('receive', content, link);
+        notifyToChat('receive', content, link, room);
       });
     },
     watchBye: () => {
