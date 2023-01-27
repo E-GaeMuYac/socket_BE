@@ -44,7 +44,8 @@ const initSocket = (socket) => {
     logger.info(link);
     logger.info(room);
     logger.info('edit');
-    io.emit(event, data, link);
+    socket.join(room);
+    socket.to(room).emit(event, data, link);
   }
 
   return {
