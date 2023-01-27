@@ -25,6 +25,16 @@ const logger = require('./logger/logger');
 io.on('connection', (socket) => {
   logger.info('connection :', { message: socket.id });
   const { watchJoin, watchSend, watchBye } = initSocket(socket);
+  const req = socket.request;
+  const {
+    headers: { referer },
+  } = req;
+  logger.info('req : ', req);
+  logger.info('referer : ', referer);
+  const roomId = referer
+    .split('/')
+    [referer.split('/').length - 1].replace(/\?.+/, '');
+  logger.info('roomId : ', roomId);
   watchJoin();
   watchSend();
   watchBye();
