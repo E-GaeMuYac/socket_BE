@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
   const {
     headers: { referer },
   } = req;
+  logger.info('socket : ', socket);
   logger.info('req : ', req);
   logger.info('referer : ', referer);
   const roomId = referer
