@@ -79,7 +79,7 @@ const initSocket = (socket) => {
         logger.info(`message : ${message}`);
         let content;
         let link;
-        if (type === '챗봇') {
+        if (type !== '챗봇') {
           if (message.includes('이메일')) {
             content = '이메일로 문의할 사항이 있나요?';
             link =
