@@ -23,7 +23,7 @@ instrument(io, {
 const logger = require('./logger/logger');
 
 io.on('connection', (socket) => {
-  logger.info('connection :', { message: socket.id });
+  logger.info('connection :', { message: socket.request });
   const { watchJoin, watchSend, watchBye } = initSocket(socket);
   const req = socket.request;
   const {
