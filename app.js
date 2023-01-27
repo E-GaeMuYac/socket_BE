@@ -38,7 +38,12 @@ const initSocket = (socket) => {
 
   function notifyToChat(event, data, link, room) {
     logger.info('chatbot 데이터를 emit합니다.');
-    logger.info(event, data, link, room);
+    logger.info('edit');
+    logger.info(event);
+    logger.info(data);
+    logger.info(link);
+    logger.info(room);
+    logger.info('edit');
     socket.to(room).emit(event, data, link);
   }
 
