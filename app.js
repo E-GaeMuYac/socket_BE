@@ -23,19 +23,18 @@ instrument(io, {
 const logger = require('./logger/logger');
 
 io.on('connection', (socket) => {
-  logger.info('connection :', { message: socket.request });
-  const { watchJoin, watchSend, watchBye } = initSocket(socket);
   const req = socket.request;
   const {
     headers: { referer },
   } = req;
-  logger.info('socket : ', socket);
-  logger.info('req : ', req);
-  logger.info('referer : ', referer);
   const roomId = referer
     .split('/')
     [referer.split('/').length - 1].replace(/\?.+/, '');
-  logger.info('roomId : ', roomId);
+  logger.info('connection :', { message: req });
+  logger.info('connection :', { message: referer });
+  logger.info('connection :', { message: roomId });
+  logger.info('connection :', { message: socket.id });
+  const { watchJoin, watchSend, watchBye } = initSocket(socket);
   watchJoin();
   watchSend();
   watchBye();
