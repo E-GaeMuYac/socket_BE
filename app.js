@@ -45,7 +45,7 @@ const initSocket = (socket) => {
     logger.info(room);
     logger.info('edit');
     socket.join(room);
-    socket.to(room).emit(event, data, link);
+    io.to(room).emit(event, data, link);
   }
 
   return {
@@ -53,7 +53,7 @@ const initSocket = (socket) => {
       watchEvent('join', async (data) => {
         const { room } = data;
         socket.join(room);
-        socket.to(room).emit('join', '안녕하세요 필넛츠 문의하기입니다');
+        io.to(room).emit('join', '안녕하세요 필넛츠 문의하기입니다');
         logger.info('방 접속에 성공하였습니다.');
         logger.info(socket.id);
       });
