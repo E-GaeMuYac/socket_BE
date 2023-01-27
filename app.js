@@ -53,7 +53,9 @@ const initSocket = (socket) => {
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
-        const { room, message } = data;
+        logger.info(data);
+        const { room } = data;
+        const { message } = data;
         logger.info(room, message);
         let content;
         let link;
