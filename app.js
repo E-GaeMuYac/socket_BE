@@ -54,6 +54,7 @@ const initSocket = (socket) => {
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         const { room, message } = data;
+        logger.info(room, message);
         let content;
         let link;
         if (message.includes('이메일')) {
