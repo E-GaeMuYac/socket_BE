@@ -50,15 +50,12 @@ const initSocket = (socket) => {
     watchJoin: () => {
       watchEvent('join', async (data) => {
         const req = socket.request;
-        logger.info(`req : ${req}`);
         const ip =
           req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        logger.info(`ip : ${ip}`);
-        logger.info(`req.ip : ${req.ip}`);
         const { room, user } = data;
 
+        socket.join(room || ip);
         socket.leave(socket.id);
-        socket.join(room);
 
         const chats = await Chat.find({ room }).limit(20).lean();
         logger.info(`get chats : ${JSON.stringify(chats)}`);
