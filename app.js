@@ -55,7 +55,8 @@ const initSocket = (socket) => {
       watchEvent('join', async (data) => {
         const { room, nickname } = data;
         socket.join(room);
-        const chats = await Chat.find({ room });
+        const chats = await Chat.find({ room }).limit(20).lean();
+        logger.info(`get chats : ${chats}`);
         io.to(room).emit(
           'join',
           `안녕하세요 ${nickname}님 필넛츠 문의하기입니다!`
@@ -94,13 +95,15 @@ const initSocket = (socket) => {
             content = '채팅 상담이 필요하신가요?';
             link = 'http://www.naver.com';
           } else {
-            await chat.save((err) => {
-              if (err) {
-                logger.info(`error : ${err}`);
-              }
-            });
+            content = '등록되지않은 키워드입니다.';
+            link = 'https://www.naver.com';
           }
           notifyToChatbot('receive', content, link, room);
+          await chat.save((err) => {
+            if (err) {
+              logger.info(`error : ${err}`);
+            }
+          });
         } else {
           notifyToChat('receive', content, room);
         }
