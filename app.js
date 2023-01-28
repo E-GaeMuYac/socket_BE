@@ -97,6 +97,7 @@ const initSocket = (socket) => {
             link = 'http://www.naver.com';
           }
           notifyToChatbot('receive', content, link, room);
+          await chat.save();
         } else {
           notifyToChat('receive', content, room);
           await chat.save();
