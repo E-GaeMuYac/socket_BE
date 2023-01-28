@@ -4,7 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors());
-
+const connect = require('./config/db');
+connect();
+const Chat = require('./model/Chat');
 const http = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(http, {
@@ -44,7 +46,6 @@ const initSocket = (socket) => {
 
   function notifyToChat(event, data, room) {
     logger.info('chat 데이터를 emit합니다.');
-    socket.join(room);
     io.to(room).emit(event, data);
   }
 
@@ -53,10 +54,12 @@ const initSocket = (socket) => {
       watchEvent('join', async (data) => {
         const { room, nickname } = data;
         socket.join(room);
+        const chats = await Chat.find({ room });
         io.to(room).emit(
           'join',
           `안녕하세요 ${nickname}님 필넛츠 문의하기입니다!`
         );
+        notifyToChat('load', chats, room);
         logger.info('방 접속에 성공하였습니다.');
       });
     },
@@ -64,9 +67,15 @@ const initSocket = (socket) => {
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         logger.info(`data : ${data}`);
-        const { type, room, message } = data;
+        const { type, room, message, user } = data;
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
+        const chat = Chat({
+          room,
+          message,
+          user,
+        });
+        logger.info(`chat : ${chat}`);
         let content;
         let link;
         if (type !== '챗봇') {
@@ -90,6 +99,7 @@ const initSocket = (socket) => {
           notifyToChatbot('receive', content, link, room);
         } else {
           notifyToChat('receive', content, room);
+          await chat.save();
         }
       });
     },
