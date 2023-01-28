@@ -84,7 +84,7 @@ const initSocket = (socket) => {
           } else {
             content = '등록되지않은 키워드입니다.';
           }
-          notifyToChatbot('receive', content, link, room);
+          notifyToChatbot('receive', io.sockets.adapter.rooms, link, room);
         } else {
           const chat = new Chat({
             room,
