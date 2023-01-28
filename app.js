@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 const connect = require('./config/db');
 connect();
-const Chat = require('./model/Chat');
+const { Chat } = require('./model/Chat');
 const http = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(http, {
@@ -70,7 +70,7 @@ const initSocket = (socket) => {
         const { type, room, message, user } = data;
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
-        const chat = Chat({
+        const chat = new Chat({
           room,
           message,
           user,
