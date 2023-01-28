@@ -55,7 +55,7 @@ const initSocket = (socket) => {
         );
         notifyToChat('load', chats, room);
         logger.info('방 접속에 성공하였습니다.');
-        logger.info(`GetRooms : ${io.sockets.adapter.rooms}`);
+        logger.info(`GetRooms : ${Object.keys(io.sockets.adapter.rooms)}`);
       });
     },
 
@@ -84,7 +84,7 @@ const initSocket = (socket) => {
           } else {
             content = '등록되지않은 키워드입니다.';
           }
-          notifyToChatbot('receive', io.sockets.adapter.rooms, link, room);
+          notifyToChatbot('receive', content, link, room);
         } else {
           const chat = new Chat({
             room,
