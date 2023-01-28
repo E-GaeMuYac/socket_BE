@@ -55,7 +55,7 @@ const initSocket = (socket) => {
         );
         notifyToChat('load', chats, room);
         logger.info('방 접속에 성공하였습니다.');
-        logger.info(`GetRooms : ${Object.keys(io.sockets.adapter.rooms)}`);
+        logger.info(`GetRooms : ${Object.keys(socket.adapter.rooms)}`);
       });
     },
 
