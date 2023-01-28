@@ -14,7 +14,7 @@ instrument(io, {
   auth: false,
 });
 
-const logger = require('./logger/logger');
+const logger = require('../logger/logger');
 
 io.on('connection', (socket) => {
   logger.info('connection :', { message: socket.id });
