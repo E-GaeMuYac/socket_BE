@@ -27,7 +27,6 @@ io.on('connection', (socket) => {
   const { watchJoin, watchSend, watchBye } = initSocket(socket);
   watchJoin();
   watchSend();
-  watchLeave();
   watchBye();
 });
 
@@ -59,15 +58,6 @@ const initSocket = (socket) => {
           `안녕하세요 ${nickname}님 필넛츠 문의하기입니다!`
         );
         logger.info('방 접속에 성공하였습니다.');
-      });
-    },
-
-    watchLeave: () => {
-      watchEvent('leave', async (data) => {
-        const { room, nickname } = data;
-        socket.leave(room);
-        io.to(room).emit('leave', `${nickname}님이 방을 나갔습니다!`);
-        logger.info('방을 나가가셨습니다.');
       });
     },
 
