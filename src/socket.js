@@ -32,36 +32,44 @@ const initSocket = (socket) => {
 
   function notifyToChatbot(event, data, link, room) {
     logger.info('chatbot 데이터를 emit합니다.');
-    socket.join(room);
     io.to(room).emit(event, data, link);
   }
 
   function notifyToChat(event, data, room) {
     logger.info('chat 데이터를 emit합니다.');
     io.to(room).emit(event, data);
+    io.emit(io._nsps.get('/').adapter.rooms);
+    logger.info(
+      `GetRooms : ${JSON.stringify(
+        Object.fromEntries(io._nsps.get('/').adapter.rooms)
+      )}`
+    );
   }
 
   return {
     watchJoin: () => {
       watchEvent('join', async (data) => {
-        const { room, nickname } = data;
+        const req = socket.request;
+        const ip =
+          req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        logger.info('새로운 클라이언트 접속!', ip, req.ip);
+        const { room, user } = data;
+
+        socket.leave(socket.id);
         socket.join(room);
 
         const chats = await Chat.find({ room }).limit(20).lean();
-        logger.info(`get chats : ${chats}`);
-        io.to(room).emit(
-          'join',
-          `안녕하세요 ${nickname}님 필넛츠 문의하기입니다!`
-        );
+        logger.info(`get chats : ${JSON.stringify(chats)}`);
+        io.to(room).emit('join', `안녕하세요 ${user}님 필넛츠 문의하기입니다!`);
+        socket.to();
         notifyToChat('load', chats, room);
         logger.info('방 접속에 성공하였습니다.');
-        logger.info(`GetRooms : ${io.sockets.adapter.rooms.server}`);
       });
     },
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
-        logger.info(`data : ${data}`);
+        logger.info(`data : ${JSON.stringify(data)}`);
         const { type, room, message, user } = data;
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
