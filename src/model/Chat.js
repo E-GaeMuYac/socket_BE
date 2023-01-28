@@ -14,6 +14,10 @@ const chatSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    loginType: {
+      type: Boolean,
+      require: true,
+    },
   },
   { timestamps: true }
 );

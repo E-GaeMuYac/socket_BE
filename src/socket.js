@@ -25,18 +25,18 @@ io.on('connection', (socket) => {
 });
 
 const initSocket = (socket) => {
-  logger.info('새로운 소켓이 연결되었습니다.');
+  const req = socket.request;
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
   function watchEvent(event, func) {
     socket.on(event, func);
   }
 
   function notifyToChatbot(event, data, link, room) {
-    logger.info('chatbot 데이터를 emit합니다.');
     io.to(room).emit(event, data, link);
   }
 
   function notifyToChat(event, data, room) {
-    logger.info('chat 데이터를 emit합니다.');
     io.to(room).emit(event, data);
     io.emit(io._nsps.get('/').adapter.rooms);
     logger.info(
@@ -49,27 +49,37 @@ const initSocket = (socket) => {
   return {
     watchJoin: () => {
       watchEvent('join', async (data) => {
-        const req = socket.request;
-        const ip =
-          req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const { room, user } = data;
 
-        socket.join(ip);
+        if (room) {
+          socket.join(room);
+          const userChats = await Chat.find({ room }).limit(20).lean();
+          logger.info(`get chats : ${JSON.stringify(userChats)}`);
+          notifyToChat('load', userChats, room);
+          io.to(room).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
+        } else {
+          socket.join(ip);
+          const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
+          logger.info(`get chats : ${JSON.stringify(noUserChats)}`);
+          notifyToChat('load', noUserChats, room);
+          io.to(room).emit(
+            'join',
+            `안녕하세요 ${user}님 필넛츠 문의하기입니다!`
+          );
+        }
         socket.leave(socket.id);
-
-        const chats = await Chat.find({ room }).limit(20).lean();
-        logger.info(`get chats : ${JSON.stringify(chats)}`);
-        io.to(room).emit('join', `안녕하세요 ${user}님 필넛츠 문의하기입니다!`);
-        socket.to();
-        notifyToChat('load', chats, room);
-        logger.info('방 접속에 성공하였습니다.');
       });
     },
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         logger.info(`data : ${JSON.stringify(data)}`);
-        const { type, room, message, user } = data;
+        let { type, room, message, user } = data;
+        let loginType = true;
+        if (!room) {
+          room = ip;
+          loginType = false;
+        }
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
         logger.info(`type : ${type}`);
@@ -97,6 +107,7 @@ const initSocket = (socket) => {
             room,
             message,
             user,
+            loginType,
           });
           notifyToChat('receive', content, room);
           await chat.save((err) => {
