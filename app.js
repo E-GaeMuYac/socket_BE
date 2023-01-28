@@ -23,6 +23,7 @@ instrument(io, {
 });
 
 const logger = require('./logger/logger');
+const { doc } = require('prettier');
 
 io.on('connection', (socket) => {
   logger.info('connection :', { message: socket.id });
@@ -93,7 +94,11 @@ const initSocket = (socket) => {
             content = '채팅 상담이 필요하신가요?';
             link = 'http://www.naver.com';
           } else {
-            await chat.save();
+            await chat.save((err) => {
+              if (err) {
+                logger.info(`error : ${err}`);
+              }
+            });
           }
           notifyToChatbot('receive', content, link, room);
         } else {
