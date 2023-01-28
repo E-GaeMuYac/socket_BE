@@ -54,7 +54,7 @@ const initSocket = (socket) => {
           req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const { room, user } = data;
 
-        socket.join(room || ip);
+        socket.join(ip);
         socket.leave(socket.id);
 
         const chats = await Chat.find({ room }).limit(20).lean();
