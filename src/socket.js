@@ -18,7 +18,7 @@ const logger = require('../logger/logger');
 
 io.on('connection', (socket) => {
   socket.leave(socket.id);
-  console.log('connection :', { message: socket.id });
+  logger.info('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye } = initSocket(socket);
   watchJoin();
   adminJoin();
@@ -41,7 +41,7 @@ const initSocket = (socket) => {
   function notifyToChat(event, data, room) {
     io.to(room).emit(event, data);
     io.emit(io._nsps.get('/').adapter.rooms);
-    console.log(
+    logger.info(
       `GetRooms : ${JSON.stringify(
         Object.fromEntries(io._nsps.get('/').adapter.rooms)
       )}`
@@ -55,13 +55,13 @@ const initSocket = (socket) => {
         if (room) {
           socket.join(room);
           const userChats = await Chat.find({ room }).limit(20).lean();
-          console.log(`get chats : ${JSON.stringify(userChats)}`);
+          logger.info(`get chats : ${JSON.stringify(userChats)}`);
           notifyToChat('load', userChats, room);
           io.to(room).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         } else {
           socket.join(ip);
           const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
-          console.log(`get chats : ${JSON.stringify(noUserChats)}`);
+          logger.info(`get chats : ${JSON.stringify(noUserChats)}`);
           notifyToChat('load', noUserChats, room);
           io.to(ip).emit('join', `안녕하세요 ${user}님 필넛츠 문의하기입니다!`);
         }
@@ -74,16 +74,16 @@ const initSocket = (socket) => {
     },
     watchSend: () => {
       watchEvent('chatting', async (data) => {
-        console.log(`data : ${JSON.stringify(data)}`);
+        logger.info(`data : ${JSON.stringify(data)}`);
         let { type, room, message, user } = data;
         let loginType = true;
         if (!room) {
           room = ip;
           loginType = false;
         }
-        console.log(`room : ${room}`);
-        console.log(`message : ${message}`);
-        console.log(`type : ${type}`);
+        logger.info(`room : ${room}`);
+        logger.info(`message : ${message}`);
+        logger.info(`type : ${type}`);
         let content;
         let link;
         if (type === '챗봇') {
@@ -113,7 +113,7 @@ const initSocket = (socket) => {
           notifyToChat('receive', content, room);
           await chat.save((err) => {
             if (err) {
-              console.log(`error : ${err}`);
+              logger.info(`error : ${err}`);
             }
           });
         }
@@ -121,7 +121,7 @@ const initSocket = (socket) => {
     },
     watchBye: () => {
       watchEvent('disconnect', () => {
-        console.log('채팅 접속 해제');
+        logger.info('채팅 접속 해제');
       });
     },
   };
