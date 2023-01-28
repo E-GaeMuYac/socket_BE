@@ -7,6 +7,8 @@ app.use(cors());
 const connect = require('./config/db');
 connect();
 
+require('./socket');
+
 const http = require('http').createServer(app);
 
 app.get('/', (req, res) => {
