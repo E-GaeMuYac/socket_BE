@@ -76,7 +76,7 @@ const initSocket = (socket) => {
             link = 'https://www.notion.so/7b471acc5ccd486f8f79bde5208d63bd';
           } else if (message.includes('설문조사')) {
             content = '설문조사 참여하고 경품 받아가세요!';
-            link = 'https://www.pillnuts.store/event;
+            link = 'https://www.pillnuts.store/event';
           } else if (message.includes('채팅')) {
             content = '채팅 상담이 필요하신가요?';
           } else {
