@@ -74,7 +74,7 @@ const initSocket = (socket) => {
         const chat = new Chat({
           room,
           message,
-          user,
+          user: 'TEST',
         });
         logger.info(`chat : ${chat}`);
         let content;
