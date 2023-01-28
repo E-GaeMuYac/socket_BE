@@ -72,12 +72,6 @@ const initSocket = (socket) => {
         const { type, room, message, user } = data;
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
-        const chat = new Chat({
-          room,
-          message,
-          user: 'TEST',
-        });
-        logger.info(`chat : ${chat}`);
         let content;
         let link;
         if (type !== '챗봇') {
@@ -99,13 +93,18 @@ const initSocket = (socket) => {
             link = 'https://www.naver.com';
           }
           notifyToChatbot('receive', content, link, room);
+        } else {
+          const chat = new Chat({
+            room,
+            message,
+            user: 'TEST',
+          });
+          notifyToChat('receive', content, room);
           await chat.save((err) => {
             if (err) {
               logger.info(`error : ${err}`);
             }
           });
-        } else {
-          notifyToChat('receive', content, room);
         }
       });
     },
