@@ -64,6 +64,7 @@ const initSocket = (socket) => {
         const { type, room, message, user } = data;
         logger.info(`room : ${room}`);
         logger.info(`message : ${message}`);
+        logger.info(`type : ${type}`);
         let content;
         let link;
         if (type === '챗봇') {
