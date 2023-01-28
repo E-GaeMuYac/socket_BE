@@ -75,6 +75,7 @@ const initSocket = (socket) => {
           message,
           user,
         });
+        await chat.save();
         logger.info(`chat : ${chat}`);
         let content;
         let link;
@@ -96,7 +97,6 @@ const initSocket = (socket) => {
             content = '등록되지않은 키워드입니다';
             link = 'http://www.naver.com';
           }
-          await chat.save();
           notifyToChatbot('receive', content, link, room);
         } else {
           notifyToChat('receive', content, room);
