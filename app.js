@@ -96,8 +96,8 @@ const initSocket = (socket) => {
             content = '등록되지않은 키워드입니다';
             link = 'http://www.naver.com';
           }
-          notifyToChatbot('receive', content, link, room);
           await chat.save();
+          notifyToChatbot('receive', content, link, room);
         } else {
           notifyToChat('receive', content, room);
           await chat.save();
