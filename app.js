@@ -14,4 +14,8 @@ app.get('/', (req, res) => {
   res.send('pillNuts Chatting Server!!');
 });
 
+require('./socket');
+const handleListen = () => console.log(`Listening on http://localhost:3000`);
+http.listen(3000, handleListen);
+
 module.exports = http;
