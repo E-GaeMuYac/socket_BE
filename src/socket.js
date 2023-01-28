@@ -50,9 +50,11 @@ const initSocket = (socket) => {
     watchJoin: () => {
       watchEvent('join', async (data) => {
         const req = socket.request;
+        logger.info(`req : ${req}`);
         const ip =
           req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        logger.info(`새로운 클라이언트 접속!${(ip, req.ip)}`);
+        logger.info(`ip : ${ip}`);
+        logger.info(`req.ip : ${req.ip}`);
         const { room, user } = data;
 
         socket.leave(socket.id);
