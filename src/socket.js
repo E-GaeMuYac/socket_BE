@@ -88,7 +88,7 @@ const initSocket = (socket) => {
           const chat = new Chat({
             room,
             message,
-            user: 'TEST',
+            user,
           });
           notifyToChat('receive', content, room);
           await chat.save((err) => {
