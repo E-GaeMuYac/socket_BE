@@ -62,10 +62,7 @@ const initSocket = (socket) => {
           const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
           logger.info(`get chats : ${JSON.stringify(noUserChats)}`);
           notifyToChat('load', noUserChats, room);
-          io.to(room).emit(
-            'join',
-            `안녕하세요 ${user}님 필넛츠 문의하기입니다!`
-          );
+          io.to(ip).emit('join', `안녕하세요 ${user}님 필넛츠 문의하기입니다!`);
         }
         socket.leave(socket.id);
       });
