@@ -46,6 +46,7 @@ const initSocket = (socket) => {
       watchEvent('join', async (data) => {
         const { room, nickname } = data;
         socket.join(room);
+
         const chats = await Chat.find({ room }).limit(20).lean();
         logger.info(`get chats : ${chats}`);
         io.to(room).emit(
@@ -72,16 +73,14 @@ const initSocket = (socket) => {
               'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
           } else if (message.includes('개발자')) {
             content = '개발자들이 궁금하신가요?';
-            link = 'http://www.naver.com';
+            link = 'https://www.notion.so/7b471acc5ccd486f8f79bde5208d63bd';
           } else if (message.includes('설문조사')) {
             content = '설문조사 참여하고 경품 받아가세요!';
             link = 'http://www.naver.com';
           } else if (message.includes('채팅')) {
             content = '채팅 상담이 필요하신가요?';
-            link = 'http://www.naver.com';
           } else {
             content = '등록되지않은 키워드입니다.';
-            link = 'https://www.naver.com';
           }
           notifyToChatbot('receive', content, link, room);
         } else {
