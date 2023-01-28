@@ -52,7 +52,7 @@ const initSocket = (socket) => {
         const req = socket.request;
         const ip =
           req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        logger.info('새로운 클라이언트 접속!', ip, req.ip);
+        logger.info(`새로운 클라이언트 접속!${(ip, req.ip)}`);
         const { room, user } = data;
 
         socket.leave(socket.id);
