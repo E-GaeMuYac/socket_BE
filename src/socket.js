@@ -23,6 +23,7 @@ io.on('connection', (socket) => {
   watchJoin();
   adminJoin();
   watchSend();
+  adminSend();
   watchBye();
 });
 
@@ -38,8 +39,8 @@ const initSocket = (socket) => {
     io.to(room).emit(event, data, link);
   }
 
-  function notifyToChat(event, data, room) {
-    io.to(room).emit(event, data);
+  function notifyToChat(event, message, room) {
+    io.to(room).emit(event, message);
     io.emit('getRooms', io._nsps.get('/').adapter.rooms);
     logger.info(
       `GetRooms : ${JSON.stringify(
@@ -51,7 +52,7 @@ const initSocket = (socket) => {
   return {
     watchJoin: () => {
       watchEvent('join', async (data) => {
-        const { room, user } = data;
+        const { room } = data;
         if (room) {
           socket.join(room);
           const userChats = await Chat.find({ room }).limit(20).lean();
@@ -62,7 +63,7 @@ const initSocket = (socket) => {
           socket.join(ip);
           const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
           logger.info(`get chats : ${JSON.stringify(noUserChats)}`);
-          notifyToChat('load', noUserChats, room);
+          notifyToChat('load', noUserChats, ip);
           io.to(ip).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         }
       });
@@ -71,6 +72,26 @@ const initSocket = (socket) => {
     adminJoin: () => {
       watchEvent('adminJoin', (data) => {
         socket.join(data);
+        io.to(data).emit('adminJoin', `관리자가 입장하였습니다!`);
+      });
+    },
+
+    adminSend: () => {
+      watchEvent('adminSend', async (data) => {
+        let { room, message, user } = data;
+        const chat = new Chat({
+          room,
+          message,
+          user,
+          loginType: true,
+          admin: true,
+        });
+        notifyToChat('adminReceive', message, room);
+        await chat.save((err) => {
+          if (err) {
+            logger.info(`error : ${err}`);
+          }
+        });
       });
     },
 
@@ -112,7 +133,7 @@ const initSocket = (socket) => {
             user,
             loginType,
           });
-          notifyToChat('receive', content, room);
+          notifyToChat('receive', message, room);
           await chat.save((err) => {
             if (err) {
               logger.info(`error : ${err}`);
