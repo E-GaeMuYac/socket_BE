@@ -36,18 +36,15 @@ const initSocket = (socket) => {
     socket.on(event, func);
   }
 
-  function notifyToChatbot(event, data, link, room) {
-    io.to(room).emit(event, data, link);
+  function notifyToChatbot(event, content, link, room) {
+    io.to(room).emit(event, content, link);
   }
 
   function notifyToChat(event, message, room) {
     io.to(room).emit(event, message);
-    io.emit('getRooms', io._nsps.get('/').adapter.rooms);
-    logger.info(
-      `GetRooms : ${JSON.stringify(
-        Object.fromEntries(io._nsps.get('/').adapter.rooms)
-      )}`
-    );
+    const roomList = `roomList : ${io._nsps.get('/').adapter.rooms}`;
+    io.emit('getRooms', roomList);
+    logger.info(`GetRooms : ${JSON.stringify(Object.fromEntries(roomList))}`);
   }
 
   return {
