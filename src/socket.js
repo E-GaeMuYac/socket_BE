@@ -40,7 +40,7 @@ const initSocket = (socket) => {
 
   function notifyToChat(event, data, room) {
     io.to(room).emit(event, data);
-    io.emit(io._nsps.get('/').adapter.rooms);
+    io.emit('getRooms', io._nsps.get('/').adapter.rooms);
     logger.info(
       `GetRooms : ${JSON.stringify(
         Object.fromEntries(io._nsps.get('/').adapter.rooms)
@@ -63,15 +63,17 @@ const initSocket = (socket) => {
           const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
           logger.info(`get chats : ${JSON.stringify(noUserChats)}`);
           notifyToChat('load', noUserChats, room);
-          io.to(ip).emit('join', `안녕하세요 ${user}님 필넛츠 문의하기입니다!`);
+          io.to(ip).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         }
       });
     },
+
     adminJoin: () => {
       watchEvent('adminJoin', (data) => {
         socket.join(data);
       });
     },
+
     watchSend: () => {
       watchEvent('chatting', async (data) => {
         logger.info(`data : ${JSON.stringify(data)}`);
