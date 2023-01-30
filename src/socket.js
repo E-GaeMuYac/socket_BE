@@ -16,11 +16,9 @@ instrument(io, {
 });
 
 const logger = require('../logger/logger');
-const { Console } = require('winston/lib/winston/transports');
 
 io.on('connection', (socket) => {
-  socket.leave(socket.id);
-  logger.info('connection :', { message: socket.id });
+  console.log('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
     initSocket(socket);
   watchJoin();
@@ -44,8 +42,8 @@ const initSocket = (socket) => {
   }
 
   function notifyToChat(event, message, room, roomList) {
-    io.to(room).emit(event, message);
-    logger.info(`roomList  :${roomList}`);
+    socket.broadcast.to(room).emit(event, message);
+    console.log(`roomList  :${roomList}`);
     io.emit('getRooms', roomList);
   }
 
@@ -56,13 +54,13 @@ const initSocket = (socket) => {
         if (room) {
           socket.join(room);
           const userChats = await Chat.find({ room }).limit(20).lean();
-          logger.info(`get chats : ${JSON.stringify(userChats)}`);
+          console.log(`get chats : ${JSON.stringify(userChats)}`);
           notifyToChat('load', userChats, room);
           io.to(room).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         } else {
           socket.join(ip);
           const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
-          logger.info(`get chats : ${JSON.stringify(noUserChats)}`);
+          console.log(`get chats : ${JSON.stringify(noUserChats)}`);
           notifyToChat('load', noUserChats, ip);
           io.to(ip).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         }
@@ -89,7 +87,7 @@ const initSocket = (socket) => {
         notifyToChat('adminReceive', message, room);
         await chat.save((err) => {
           if (err) {
-            logger.info(`error : ${err}`);
+            console.log(`error : ${err}`);
           }
         });
       });
@@ -98,26 +96,26 @@ const initSocket = (socket) => {
     adminLeave: () => {
       watchEvent('adminLeave', async (data) => {
         const { room, user } = data;
-        logger.info(room, user);
+        console.log(room, user);
         socket.leave(room);
         await Room.findOneAndDelete({ room: room });
         io.to(room).emit('adminJoin', `관리자가 나가셨습니다!`);
-        logger.info(`관리자가 나갔습니다.`);
+        console.log(`관리자가 나갔습니다.`);
       });
     },
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
-        logger.info(`data : ${JSON.stringify(data)}`);
+        console.log(`data : ${JSON.stringify(data)}`);
         let { type, room, message, user } = data;
         let loginType = true;
         if (!room) {
           room = ip;
           loginType = false;
         }
-        logger.info(`room : ${room}`);
-        logger.info(`message : ${message}`);
-        logger.info(`type : ${type}`);
+        console.log(`room : ${room}`);
+        console.log(`message : ${message}`);
+        console.log(`type : ${type}`);
         let content;
         let link;
         if (type === '챗봇') {
@@ -149,6 +147,7 @@ const initSocket = (socket) => {
             { $set: { room, user } },
             { upsert: true }
           );
+          await Room.findOneAndDelete({ room: socket.id });
 
           const roomList = await Room.find().sort('-updatedAt');
 
@@ -156,7 +155,7 @@ const initSocket = (socket) => {
 
           await chat.save((err) => {
             if (err) {
-              logger.info(`error : ${err}`);
+              console.log(`error : ${err}`);
             }
           });
         }
@@ -165,7 +164,7 @@ const initSocket = (socket) => {
 
     watchBye: () => {
       watchEvent('disconnect', (data) => {
-        logger.info('채팅 접속 해제');
+        console.log('채팅 접속 해제');
       });
     },
   };
