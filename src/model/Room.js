@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 const RoomSchema = Schema(
   {
     room: {
-      type: Array,
+      type: Object,
       require: true,
     },
     user: {
-      type: Array,
+      type: String,
       required: true,
     },
   },
