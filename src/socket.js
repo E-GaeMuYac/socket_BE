@@ -19,7 +19,8 @@ const logger = require('../logger/logger');
 io.on('connection', (socket) => {
   socket.leave(socket.id);
   logger.info('connection :', { message: socket.id });
-  const { watchJoin, adminJoin, watchSend, watchBye } = initSocket(socket);
+  const { watchJoin, adminJoin, watchSend, watchBye, adminSend } =
+    initSocket(socket);
   watchJoin();
   adminJoin();
   watchSend();
