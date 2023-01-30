@@ -16,6 +16,7 @@ instrument(io, {
 });
 
 const logger = require('../logger/logger');
+const { Console } = require('winston/lib/winston/transports');
 
 io.on('connection', (socket) => {
   socket.leave(socket.id);
@@ -149,7 +150,7 @@ const initSocket = (socket) => {
             { upsert: true }
           );
 
-          const roomList = await Room.find().sort('-updatedAt').room;
+          const roomList = await Room.find().sort('-updatedAt');
 
           notifyToChat('receive', message, room, roomList);
 
