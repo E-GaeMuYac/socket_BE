@@ -61,12 +61,18 @@ const initSocket = (socket) => {
           const userChats = await Chat.find({ room }).limit(30).lean();
           socket.join(room);
           notifyToChat('load', userChats, room);
-          io.to(room).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
+          io.to(room).emit(
+            'join',
+            `안녕하세요 필넛츠 문의하기입니다! \n 키워드를 입력해주세요!`
+          );
         } else {
           const noUserChats = await Chat.find({ room: ip }).limit(30).lean();
           socket.join(ip);
           notifyToChat('load', noUserChats, ip);
-          io.to(ip).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
+          io.to(ip).emit(
+            'join',
+            `안녕하세요 필넛츠 문의하기입니다! \n  키워드를 입력해주세요!`
+          );
         }
       });
     },
@@ -123,16 +129,23 @@ const initSocket = (socket) => {
         let content;
         let link;
         if (type === '챗봇') {
-          if (message.includes('이메일')) {
-            content = '이메일로 문의할 사항이 있나요?';
+          if (message.includes('이메일') || message.includes('메일')) {
+            content = '문의사항이 있으면 이메일을 보내주세요!';
             link =
               'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
-          } else if (message.includes('개발자')) {
+          } else if (message.includes('개발자') || message.includes('개발')) {
             content = '개발자들이 궁금하신가요?';
             link = 'https://www.notion.so/7b471acc5ccd486f8f79bde5208d63bd';
-          } else if (message.includes('설문조사')) {
+          } else if (
+            message.includes('설문조사') ||
+            message.includes('설문') ||
+            message.includes('조사')
+          ) {
             content = '설문조사 참여하고 경품 받아가세요!';
             link = 'https://www.pillnuts.store/event';
+          } else if (message.includes('인스타')) {
+            content = '필너츠 공식 인스타그램입니다!';
+            link = 'https://www.instagram.com/pillnuts_official/';
           } else if (message.includes('채팅')) {
             content = '채팅 상담이 필요하신가요?';
           } else {
