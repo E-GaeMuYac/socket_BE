@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { Server } = require('socket.io');
 const { Chat } = require('./model/Chat');
 const { Room } = require('./model/Room');
@@ -12,7 +14,11 @@ const io = new Server(http, {
 
 const { instrument } = require('@socket.io/admin-ui');
 instrument(io, {
-  auth: false,
+  auth: {
+    type: 'basic',
+    username: process.env.UI_USERNAME,
+    password: process.env.UI_PASSWORD,
+  },
 });
 
 const logger = require('../logger/logger');
@@ -52,15 +58,13 @@ const initSocket = (socket) => {
       watchEvent('join', async (data) => {
         const { room } = data;
         if (room) {
+          const userChats = await Chat.find({ room }).limit(30).lean();
           socket.join(room);
-          const userChats = await Chat.find({ room }).limit(20).lean();
-          console.log(`get chats : ${JSON.stringify(userChats)}`);
           notifyToChat('load', userChats, room);
           io.to(room).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         } else {
+          const noUserChats = await Chat.find({ room: ip }).limit(30).lean();
           socket.join(ip);
-          const noUserChats = await Chat.find({ room: ip }).limit(20).lean();
-          console.log(`get chats : ${JSON.stringify(noUserChats)}`);
           notifyToChat('load', noUserChats, ip);
           io.to(ip).emit('join', `안녕하세요 필넛츠 문의하기입니다!`);
         }
@@ -144,7 +148,7 @@ const initSocket = (socket) => {
           });
           await Room.updateOne(
             { room },
-            { $set: { room, user } },
+            { $set: { room, user, updatedAt: Date.now() } },
             { upsert: true }
           );
           await Room.findOneAndDelete({ room: socket.id });
