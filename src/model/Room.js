@@ -17,7 +17,7 @@ const roomSchema = Schema({
   updatedAt: {
     type: Date,
     default: Date.now,
-    expires: 60 * 3,
+    expires: 60 * 10,
   },
 });
 

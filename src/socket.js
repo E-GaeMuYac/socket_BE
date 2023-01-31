@@ -24,6 +24,11 @@ instrument(io, {
 const logger = require('../logger/logger');
 
 io.on('connection', (socket) => {
+  socket.onAny(async () => {
+    const roomList = await Room.find().sort('-updatedAt');
+    io.emit('getRooms', roomList);
+    console.log(roomList);
+  });
   console.log('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
     initSocket(socket);
@@ -47,10 +52,8 @@ const initSocket = (socket) => {
     io.to(room).emit(event, data, link);
   }
 
-  function notifyToChat(event, message, room, roomList) {
+  function notifyToChat(event, message, room) {
     socket.broadcast.to(room).emit(event, message);
-    console.log(`roomList  :${roomList}`);
-    io.emit('getRooms', roomList);
   }
 
   return {
@@ -108,8 +111,8 @@ const initSocket = (socket) => {
         const { room, user } = data;
         console.log(room, user);
         socket.leave(room);
-        await Room.findOneAndDelete({ room: room });
-        io.to(room).emit('adminJoin', `관리자가 나가셨습니다!`);
+        await Room.findOneAndDelete({ room });
+        io.to(room).emit('adminLeave', `관리자가 나가셨습니다!`);
         console.log(`관리자가 나갔습니다.`);
       });
     },
@@ -173,9 +176,7 @@ const initSocket = (socket) => {
           );
           await Room.findOneAndDelete({ room: socket.id });
 
-          const roomList = await Room.find().sort('-updatedAt');
-
-          notifyToChat('receive', message, room, roomList);
+          notifyToChat('receive', message, room);
 
           await chat.save((err) => {
             if (err) {
