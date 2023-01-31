@@ -115,7 +115,7 @@ const initSocket = (socket) => {
         await Room.findOneAndDelete({ room });
         io.to(room).emit(
           'adminLeave',
-          `관리자가 퇴장하였습니다! \n 다시 연결을 원하시면 "채팅"을 입력해주세요!`
+          `관리자가 퇴장하였습니다! \n\n다시 연결을 원하시면 "채팅"을 입력해주세요!`
         );
         console.log(`관리자가 나갔습니다.`);
       });
