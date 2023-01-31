@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const RoomSchema = Schema({
+const roomSchema = Schema({
   room: {
     type: Object,
     require: true,
@@ -17,10 +17,9 @@ const RoomSchema = Schema({
   updatedAt: {
     type: Date,
     default: Date.now,
-    expires: 300,
   },
 });
 
-const Room = mongoose.model('Room', RoomSchema);
+const Room = mongoose.model('Room', roomSchema);
 
 module.exports = { Room };

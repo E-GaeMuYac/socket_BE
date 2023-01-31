@@ -25,7 +25,7 @@ const chatSchema = Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 3600 * 24 * 3,
+    expires: 259200,
   },
 });
 
