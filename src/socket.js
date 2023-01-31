@@ -142,13 +142,17 @@ const initSocket = (socket) => {
             message.includes('조사')
           ) {
             content = '설문조사 참여하고 경품 받아가세요!\n';
-            link = 'https://www.pillnuts.store/event';
+            link =
+              'https://docs.google.com/forms/d/e/1FAIpQLSecVl62mf888KCfZ7RpNJ6gyEKiCLWoDGKbPpE7SPy4wPW2WQ/formResponse';
           } else if (message.includes('인스타')) {
-            content = '필너츠 공식 인스타그램입니다!';
+            content = '필너츠 공식 인스타그램입니다!\n';
             link = 'https://www.instagram.com/pillnuts_official/';
+          } else if (message.includes('이벤트')) {
+            content = '필너츠 공식 인스타그램입니다!\n';
+            link = 'https://www.pillnuts.store/event';
           } else if (message.includes('키워드')) {
             content =
-              '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담';
+              '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담, 이벤트';
           } else if (message.includes('채팅') || message.includes('상담')) {
             content = '채팅 상담이 필요하신가요?';
           } else {
