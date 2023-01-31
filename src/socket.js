@@ -63,7 +63,7 @@ const initSocket = (socket) => {
           notifyToChat('load', userChats, room);
           io.to(room).emit(
             'join',
-            `안녕하세요 필넛츠 문의하기입니다! \n 키워드를 입력해주세요!`
+            `안녕하세요 필넛츠 문의하기입니다! \n키워드를 입력해주세요!`
           );
         } else {
           const noUserChats = await Chat.find({ room: ip }).limit(30).lean();
@@ -71,7 +71,7 @@ const initSocket = (socket) => {
           notifyToChat('load', noUserChats, ip);
           io.to(ip).emit(
             'join',
-            `안녕하세요 필넛츠 문의하기입니다! \n  키워드를 입력해주세요!`
+            `안녕하세요 필넛츠 문의하기입니다! \n키워드를 입력해주세요!`
           );
         }
       });
@@ -130,7 +130,7 @@ const initSocket = (socket) => {
         let link;
         if (type === '챗봇') {
           if (message.includes('이메일') || message.includes('메일')) {
-            content = '문의사항이 있으면 이메일을 보내주세요!';
+            content = '문의사항이 있으면 이메일을 보내주세요!\n';
             link =
               'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
           } else if (message.includes('개발자') || message.includes('개발')) {
@@ -141,12 +141,15 @@ const initSocket = (socket) => {
             message.includes('설문') ||
             message.includes('조사')
           ) {
-            content = '설문조사 참여하고 경품 받아가세요!';
+            content = '설문조사 참여하고 경품 받아가세요!\n';
             link = 'https://www.pillnuts.store/event';
           } else if (message.includes('인스타')) {
             content = '필너츠 공식 인스타그램입니다!';
             link = 'https://www.instagram.com/pillnuts_official/';
-          } else if (message.includes('채팅')) {
+          } else if (message.includes('키워드')) {
+            content =
+              '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담';
+          } else if (message.includes('채팅') || message.includes('상담')) {
             content = '채팅 상담이 필요하신가요?';
           } else {
             content = '등록되지않은 키워드입니다.';
