@@ -148,7 +148,7 @@ const initSocket = (socket) => {
             content = '필너츠 공식 인스타그램입니다!\n';
             link = 'https://www.instagram.com/pillnuts_official/';
           } else if (message.includes('이벤트')) {
-            content = '필너츠 공식 인스타그램입니다!\n';
+            content = '이벤트가 궁금하신가요!\n';
             link = 'https://www.pillnuts.store/event';
           } else if (message.includes('키워드')) {
             content =
