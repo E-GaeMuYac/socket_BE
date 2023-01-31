@@ -62,11 +62,12 @@ const initSocket = (socket) => {
         const { room } = data;
         if (room) {
           const userChats = await Chat.find({ room }).limit(30).lean();
+          console.log(userChats);
           socket.join(room);
           notifyToChat('load', userChats, room);
           io.to(room).emit(
             'join',
-            `안녕하세요 필넛츠 문의하기입니다! \n키워드를 입력해주세요!`
+            `안녕하세요 필넛츠 문의하기입니다!\n \n키워드를 입력해주세요!`
           );
         } else {
           const noUserChats = await Chat.find({ room: ip }).limit(30).lean();
@@ -74,7 +75,7 @@ const initSocket = (socket) => {
           notifyToChat('load', noUserChats, ip);
           io.to(ip).emit(
             'join',
-            `안녕하세요 필넛츠 문의하기입니다! \n키워드를 입력해주세요!`
+            `안녕하세요 필넛츠 문의하기입니다!\n \n키워드를 입력해주세요!`
           );
         }
       });
@@ -112,7 +113,10 @@ const initSocket = (socket) => {
         console.log(room, user);
         socket.leave(room);
         await Room.findOneAndDelete({ room });
-        io.to(room).emit('adminLeave', `관리자가 나가셨습니다!`);
+        io.to(room).emit(
+          'adminLeave',
+          `관리자가 퇴장하였습니다! \n 다시 연결을 원하시면 "채팅"을 입력해주세요!`
+        );
         console.log(`관리자가 나갔습니다.`);
       });
     },
