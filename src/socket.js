@@ -86,8 +86,10 @@ const initSocket = (socket) => {
     },
 
     adminJoin: () => {
-      watchEvent('adminJoin', (data) => {
+      watchEvent('adminJoin', async (data) => {
         socket.join(data);
+        const userChats = await Chat.find({ room: data }).limit(30).lean();
+        loadToChat('load', userChats, data);
         io.to(data).emit('adminJoin', `관리자가 입장하였습니다!`);
       });
     },
