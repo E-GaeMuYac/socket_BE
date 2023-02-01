@@ -56,6 +56,10 @@ const initSocket = (socket) => {
     socket.broadcast.to(room).emit(event, message);
   }
 
+  function loadToChat(event, message, room) {
+    io.to(room).emit(event, message);
+  }
+
   return {
     watchJoin: () => {
       watchEvent('join', async (data) => {
@@ -64,7 +68,7 @@ const initSocket = (socket) => {
           const userChats = await Chat.find({ room }).limit(30).lean();
           console.log(userChats);
           socket.join(room);
-          notifyToChat('load', userChats, room);
+          loadToChat('load', userChats, room);
           io.to(room).emit(
             'join',
             `안녕하세요 필넛츠 문의하기입니다!\n \n키워드를 입력해주세요!`
@@ -72,7 +76,7 @@ const initSocket = (socket) => {
         } else {
           const noUserChats = await Chat.find({ room: ip }).limit(30).lean();
           socket.join(ip);
-          notifyToChat('load', noUserChats, ip);
+          loadToChat('load', noUserChats, ip);
           io.to(ip).emit(
             'join',
             `안녕하세요 필넛츠 문의하기입니다!\n \n키워드를 입력해주세요!`
