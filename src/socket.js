@@ -27,9 +27,9 @@ io.on('connection', (socket) => {
   socket.onAny(async () => {
     const roomList = await Room.find().sort('-updatedAt');
     io.emit('getRooms', roomList);
-    console.log(roomList);
+    logger.info(roomList);
   });
-  console.log('connection :', { message: socket.id });
+  logger.info('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
     initSocket(socket);
   watchJoin();
@@ -66,7 +66,7 @@ const initSocket = (socket) => {
         const { room } = data;
         if (room) {
           const userChats = await Chat.find({ room }).limit(30).lean();
-          console.log(userChats);
+          logger.info(userChats);
           socket.join(room);
           loadToChat('load', userChats, room);
           io.to(room).emit(
@@ -90,7 +90,10 @@ const initSocket = (socket) => {
         socket.join(data);
         const userChats = await Chat.find({ room: data }).limit(30).lean();
         loadToChat('load', userChats, data);
-        io.to(data).emit('adminJoin', `관리자가 입장하였습니다!`);
+        io.to(data).emit(
+          'adminJoin',
+          `관리자가 입장하였습니다!\n\n1분동안 채팅이 없을 시 상담이 종료됩니다.`
+        );
       });
     },
 
@@ -107,7 +110,7 @@ const initSocket = (socket) => {
         notifyToChat('adminReceive', message, room);
         await chat.save((err) => {
           if (err) {
-            console.log(`error : ${err}`);
+            logger.info(`error : ${err}`);
           }
         });
       });
@@ -116,29 +119,29 @@ const initSocket = (socket) => {
     adminLeave: () => {
       watchEvent('adminLeave', async (data) => {
         const { room, user } = data;
-        console.log(room, user);
+        logger.info(room, user);
         socket.leave(room);
         await Room.findOneAndDelete({ room });
         io.to(room).emit(
           'adminLeave',
           `관리자가 퇴장하였습니다! \n\n다시 연결을 원하시면 "채팅"을 입력해주세요!`
         );
-        console.log(`관리자가 나갔습니다.`);
+        logger.info(`관리자가 나갔습니다.`);
       });
     },
 
     watchSend: () => {
       watchEvent('chatting', async (data) => {
-        console.log(`data : ${JSON.stringify(data)}`);
+        logger.info(`data : ${JSON.stringify(data)}`);
         let { type, room, message, user } = data;
         let loginType = true;
         if (!room) {
           room = ip;
           loginType = false;
         }
-        console.log(`room : ${room}`);
-        console.log(`message : ${message}`);
-        console.log(`type : ${type}`);
+        logger.info(`room : ${room}`);
+        logger.info(`message : ${message}`);
+        logger.info(`type : ${type}`);
         let content;
         let link;
         if (type === '챗봇') {
@@ -168,7 +171,7 @@ const initSocket = (socket) => {
               '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담, 이벤트';
           } else if (message.includes('채팅') || message.includes('상담')) {
             content =
-              '채팅 상담이 필요하신가요?\n운영시간\n평일 : 오전 9시 ~ 오후 9시 ';
+              '채팅 상담이 필요하신가요?\n운영시간\n평일 : 오후 2시 ~ 오후 9시 ';
           } else {
             content = '등록되지않은 키워드입니다.';
           }
@@ -191,7 +194,7 @@ const initSocket = (socket) => {
 
           await chat.save((err) => {
             if (err) {
-              console.log(`error : ${err}`);
+              logger.info(`error : ${err}`);
             }
           });
         }
@@ -200,7 +203,7 @@ const initSocket = (socket) => {
 
     watchBye: () => {
       watchEvent('disconnect', (data) => {
-        console.log('채팅 접속 해제');
+        logger.info('채팅 접속 해제');
       });
     },
   };
