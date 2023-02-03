@@ -151,7 +151,8 @@ const initSocket = (socket) => {
               'https://mail.google.com/mail/u/0/?fs=1&tf=cm&source=mailto&to=pillnutsss@gmail.com';
           } else if (message.includes('개발자') || message.includes('개발')) {
             content = '개발자들이 궁금하신가요?';
-            link = 'https://www.notion.so/7b471acc5ccd486f8f79bde5208d63bd';
+            link =
+              'https://lying-tarsier-96f.notion.site/7b471acc5ccd486f8f79bde5208d63bd';
           } else if (
             message.includes('설문조사') ||
             message.includes('설문') ||
