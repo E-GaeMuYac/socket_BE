@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+const dayjs = require('dayjs');
 const { Server } = require('socket.io');
 const { Chat } = require('./model/Chat');
 const { Room } = require('./model/Room');
@@ -21,6 +21,7 @@ instrument(io, {
   },
 });
 
+var now = dayjs();
 const logger = require('../logger/logger');
 
 io.on('connection', (socket) => {
@@ -171,8 +172,9 @@ const initSocket = (socket) => {
             content =
               '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담, 이벤트';
           } else if (message.includes('채팅') || message.includes('상담')) {
+            logger.info(now.format());
             content =
-              '채팅 상담이 필요하신가요?\n운영시간\n평일 : 오후 2시 ~ 오후 9시 ';
+              '채팅 상담이 필요하신가요?\n\n운영시간\n평일 : 오후 2시 ~ 오후 9시';
           } else {
             content = '등록되지않은 키워드입니다.';
           }
