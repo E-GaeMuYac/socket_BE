@@ -173,9 +173,13 @@ const initSocket = (socket) => {
           } else if (message.includes('이벤트')) {
             content = '이벤트가 궁금하신가요!\n';
             link = 'https://www.pillnuts.store/event';
+          } else if (message.includes('구글')) {
+            content = '혹시 필너츠를 구글에 검색해보셨나요?\n';
+            link =
+              'https://www.google.com/search?q=%ED%95%84%EB%84%88%EC%B8%A0&oq=%ED%95%84%EB%84%88%EC%B8%A0&aqs=chrome..69i57j0i13i512l3j46i13i512l2j0i13i512l3j46i13i512.655j0j15&sourceid=chrome&ie=UTF-8';
           } else if (message.includes('키워드')) {
             content =
-              '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담, 이벤트';
+              '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담, 이벤트, 구글';
           } else if (message.includes('채팅') || message.includes('상담')) {
             if (day === 6 || day === 0 || (hour < 14 && hour > 21)) {
               content =
