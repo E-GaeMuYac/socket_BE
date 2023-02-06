@@ -185,7 +185,7 @@ const initSocket = (socket) => {
             content =
               '이메일, 메일, 개발자 ,개발, 설문조사, 설문, 조사, 인스타, 채팅, 상담, 이벤트, 구글';
           } else if (message.includes('채팅') || message.includes('상담')) {
-            if (day === 6 || day === 0 || (hour < 14 && hour > 21)) {
+            if (day === 6 || day === 0 || hour < 14 || hour > 21) {
               content =
                 '지금은 채팅상담 운영시간이 아닙니다 :(\n\n운영시간\n평일 : 오후 2시 ~ 오후 9시';
             } else {
