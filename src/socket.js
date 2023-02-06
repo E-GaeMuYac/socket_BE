@@ -22,9 +22,9 @@ instrument(io, {
   },
 });
 
-const now = dayjs().format();
-const day = dayjs().get('d');
-const hour = dayjs().get('h');
+const KST = dayjs().add(9, 'h');
+const day = KST.get('D');
+const hour = KST.get('h');
 
 const logger = require('../logger/logger');
 
@@ -33,11 +33,9 @@ io.on('connection', (socket) => {
     const roomList = await Room.find().sort('-updatedAt');
     io.emit('getRooms', roomList);
     logger.info(roomList);
-    logger.info('time');
+    logger.info('time ');
     logger.info(day);
     logger.info(hour);
-    logger.info(now);
-    logger.info('time');
   });
   logger.info('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
