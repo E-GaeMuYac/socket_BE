@@ -29,8 +29,8 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Seoul');
 
 const now = dayjs(new Date()).format();
-const day = dayjs().get('days');
-const hour = dayjs().get('hour');
+const day = dayjs(new Date()).get('days');
+const hour = dayjs(new Date()).get('hour');
 
 const logger = require('../logger/logger');
 
