@@ -22,6 +22,7 @@ instrument(io, {
   },
 });
 
+const now = dayjs().format();
 const day = dayjs().get('d');
 const hour = dayjs().get('h');
 
@@ -32,8 +33,11 @@ io.on('connection', (socket) => {
     const roomList = await Room.find().sort('-updatedAt');
     io.emit('getRooms', roomList);
     logger.info(roomList);
+    logeer.info('time');
     logger.info(day);
     logger.info(hour);
+    logger.info(now);
+    logeer.info('time');
   });
   logger.info('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
