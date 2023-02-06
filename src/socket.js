@@ -33,11 +33,11 @@ io.on('connection', (socket) => {
     const roomList = await Room.find().sort('-updatedAt');
     io.emit('getRooms', roomList);
     logger.info(roomList);
-    logeer.info('time');
+    logger.info('time');
     logger.info(day);
     logger.info(hour);
     logger.info(now);
-    logeer.info('time');
+    logger.info('time');
   });
   logger.info('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
