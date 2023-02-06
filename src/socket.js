@@ -28,7 +28,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Seoul');
 
-const now = dayjs().format();
+const now = dayjs(new Date()).format();
 const day = dayjs().get('days');
 const hour = dayjs().get('hour');
 
@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
     io.emit('getRooms', roomList);
     logger.info(roomList);
     logger.info('time ');
-    logger.info(now);
+    console.log(now);
     logger.info(day);
     logger.info(hour);
   });
