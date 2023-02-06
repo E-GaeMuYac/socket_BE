@@ -22,7 +22,7 @@ instrument(io, {
   },
 });
 
-const KST = dayjs(new Date()).add(9, 'h');
+const KST = dayjs(new Date());
 const day = KST.get('D');
 const hour = KST.get('h');
 
