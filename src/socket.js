@@ -1,5 +1,4 @@
 require('dotenv').config();
-const dayjs = require('dayjs');
 
 const { Server } = require('socket.io');
 const { Chat } = require('./model/Chat');
@@ -22,9 +21,16 @@ instrument(io, {
   },
 });
 
-const KST = dayjs(new Date());
-const day = KST.get('D');
-const hour = KST.get('h');
+const dayjs = require('dayjs');
+const timezone = require('dayjs/plugin/timezone');
+const utc = require('dayjs/plugin/utc');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Seoul');
+
+const now = dayjs().format();
+const day = dayjs().get('D');
+const hour = dayjs().get('h');
 
 const logger = require('../logger/logger');
 
@@ -34,7 +40,7 @@ io.on('connection', (socket) => {
     io.emit('getRooms', roomList);
     logger.info(roomList);
     logger.info('time ');
-    logger.info(KST);
+    logger.info(now);
     logger.info(day);
     logger.info(hour);
   });
