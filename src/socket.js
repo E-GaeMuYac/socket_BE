@@ -23,8 +23,8 @@ instrument(io, {
 });
 
 const KST = dayjs().add(9, 'h');
-const day = dayjs().get('d');
-const hour = dayjs().get('h');
+const day = KST.get('D');
+const hour = KST.get('h');
 
 const logger = require('../logger/logger');
 
