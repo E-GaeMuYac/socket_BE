@@ -22,8 +22,7 @@ instrument(io, {
   },
 });
 
-const now = dayjs(new Date());
-const KST = dayjs().add(9, 'h');
+const KST = dayjs(new Date()).add(9, 'h');
 const day = KST.get('D');
 const hour = KST.get('h');
 
@@ -35,7 +34,7 @@ io.on('connection', (socket) => {
     io.emit('getRooms', roomList);
     logger.info(roomList);
     logger.info('time ');
-    logger.info(now);
+    logger.info(KST);
     logger.info(day);
     logger.info(hour);
   });
