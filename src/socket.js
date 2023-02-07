@@ -28,9 +28,6 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Seoul');
 
-const day = dayjs(new Date()).get('days');
-const hour = dayjs(new Date()).get('hour');
-
 const logger = require('../logger/logger');
 
 io.on('connection', (socket) => {
@@ -148,6 +145,8 @@ const initSocket = (socket) => {
         logger.info(`data : ${JSON.stringify(data)}`);
         let { type, room, message, user } = data;
         let loginType = true;
+        const day = dayjs(new Date()).get('days');
+        const hour = dayjs(new Date()).get('hour');
         if (!room) {
           room = ip;
           loginType = false;
