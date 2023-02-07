@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     const roomList = await Room.find().sort('-updatedAt');
     io.emit('getRooms', roomList);
     logger.info(roomList);
-    logger.info('time ');
+    logger.info('time');
     logger.info(day);
     logger.info(hour);
   });
