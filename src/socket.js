@@ -36,8 +36,6 @@ io.on('connection', (socket) => {
     io.emit('getRooms', roomList);
     logger.info(roomList);
     logger.info('time');
-    logger.info(day);
-    logger.info(hour);
   });
   logger.info('connection :', { message: socket.id });
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
@@ -147,6 +145,8 @@ const initSocket = (socket) => {
         let loginType = true;
         const day = dayjs(new Date()).get('days');
         const hour = dayjs(new Date()).get('hour');
+        logger.info(day);
+        logger.info(hour);
         if (!room) {
           room = ip;
           loginType = false;
