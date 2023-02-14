@@ -70,6 +70,7 @@ const initSocket = (socket) => {
     watchJoin: () => {
       watchEvent('join', async (data) => {
         const { room } = data;
+        console.log(room);
         if (room) {
           const userChats = await Chat.find({ room }).limit(30).lean();
           logger.info(userChats);
