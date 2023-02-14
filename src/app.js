@@ -11,7 +11,7 @@ connect();
 const http = require('http').createServer(app);
 
 app.get('/', (req, res) => {
-  res.send('pillNuts Chatting Server!!');
+  res.send('pillNuts Chatting Server!');
 });
 
 module.exports = http;
