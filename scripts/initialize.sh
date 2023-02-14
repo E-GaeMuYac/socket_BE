@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/ubuntu/socket_BE
+cd /home/ubuntu/socket_BE 
 npm install
 npm install pm2@latest -g
 sudo apt-get update
