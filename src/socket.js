@@ -34,10 +34,8 @@ io.on('connection', (socket) => {
   socket.onAny(async () => {
     const roomList = await Room.find().sort('-updatedAt');
     io.emit('getRooms', roomList);
-    logger.info(roomList);
-    logger.info('time');
   });
-  logger.info('connection :', { message: socket.id });
+
   const { watchJoin, adminJoin, watchSend, watchBye, adminSend, adminLeave } =
     initSocket(socket);
   watchJoin();
@@ -210,7 +208,6 @@ const initSocket = (socket) => {
             { $set: { room, user, updatedAt: Date.now() } },
             { upsert: true }
           );
-          await Room.findOneAndDelete({ room: socket.id });
 
           notifyToChat('receive', message, room);
 
